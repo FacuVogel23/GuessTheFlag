@@ -139,7 +139,7 @@ struct ContentView: View {
                 actualScore += 1
             }else {
                 scoreTitle = """
-                                 Wrong! 🚫
+                             Wrong! 🚫
                              That's the flag of \(countries[number])
                              """
                 //scoreTitle = "Wrong! That's the flag of \(countries[number])"
@@ -152,7 +152,7 @@ struct ContentView: View {
                 actualScore += 1
             }else {
                 scoreTitle = """
-                                 Wrong! 🚫
+                             Wrong! 🚫
                              That's the flag of \(countries[number])
                              """
                 //scoreTitle = "Wrong! That's the flag of \(countries[number])"
