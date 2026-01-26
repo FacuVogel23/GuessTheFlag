@@ -17,11 +17,13 @@ struct ContentView: View {
     @State private var gameOver = false
     @State private var finalScore = 0
     @State private var questionNumber = 0
+    @State private var selectedFlag: Int? = nil
     
     struct FlagImage: View {
         var country: String
         
         var body: some View {
+            
             Image(country)
                 .clipShape(.capsule)
                 .shadow(radius: 5)
@@ -59,15 +61,29 @@ struct ContentView: View {
                 
                     ForEach(0..<3) { number in
                         Button {
-                            questionNumber = flagTapped(number, questionNumber)
-                        } label: {
-                            FlagImage(country: countries[number])
+                            selectedFlag = number
+                            
+                            withAnimation {
+                                questionNumber = flagTapped(number, questionNumber)
+                            }
+                        }
+                        label: {
+                                FlagImage(country: countries[number])
                             /*
                             Image(countries[number])
                                 .clipShape(.capsule)
                                 .shadow(radius: 5)
                              */
                         }
+                        .rotation3DEffect(.degrees(selectedFlag == number ? 360 : 0),
+                                          axis: (x: 0, y: 1, z: 0)
+                        )
+                        .animation(.bouncy(duration: 0.8), value: selectedFlag)
+                        .opacity(selectedFlag == nil || selectedFlag == number ? 1.0 : 0.25)
+                        .scaleEffect(selectedFlag == nil || selectedFlag == number ? 1.0 : 0.6)
+                        //.blur(radius: selectedFlag == nil || selectedFlag == number ? 0 : 3)
+                        //.offset(y: selectedFlag == nil || selectedFlag == number ? 0 : 10)
+                        .animation(.default, value: selectedFlag)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -78,18 +94,22 @@ struct ContentView: View {
                 Spacer()
                 Spacer()
                 
-                Text("Score: \(actualScore)")
-                    .foregroundStyle(.white)
-                    .font(.title.bold())
+                withAnimation {
+                    Text("Score: \(actualScore)")
+                        .foregroundStyle(.white)
+                        .font(.title.bold())
+                }
                 
-                if gameOver {
-                    Text("Question 8/8")
-                        .foregroundStyle(.white)
-                        .font(.title2.italic())
-                }else {
-                    Text("Question \(questionNumber + 1)/8")
-                        .foregroundStyle(.white)
-                        .font(.title2.italic())
+                withAnimation {
+                    if gameOver {
+                        Text("Question 8/8")
+                            .foregroundStyle(.white)
+                            .font(.title2.italic())
+                    }else {
+                        Text("Question \(questionNumber + 1)/8")
+                            .foregroundStyle(.white)
+                            .font(.title2.italic())
+                    }
                 }
                     
                 Spacer()
@@ -140,7 +160,9 @@ struct ContentView: View {
             
             finalScore = actualScore
             gameOver = true
-            questionNum = 0
+            withAnimation {
+                questionNum = 0
+            }
         }
         
         return questionNum
@@ -149,12 +171,17 @@ struct ContentView: View {
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        selectedFlag = nil
     }
     
     func restartGame() {
-        actualScore = 0
+        withAnimation {
+            actualScore = 0
+        }
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        selectedFlag = nil
+        
     }
 }
 
